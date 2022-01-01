@@ -1,0 +1,41 @@
+#include <stdio.h>
+struct account
+{
+    int dob;
+    long long int acc_num, aadhar_num;
+    float balance;
+    char name[100];
+};
+void display()
+{
+    printf("Enter your choice of operation\n");
+    printf("1. Open new account\n");
+    printf("2. Make transaction\n");
+    printf("3. Close existing account\n");
+    printf("4. Modify account details\n");
+    printf("5. Exit\n");
+    printf("Choose your operation 1 to 5\n");
+}
+void menu()
+{
+    
+    while(1)
+    {
+        int choice;
+        display();
+        scanf("%d",&choice);
+        if(choice<1 || choice>5)
+        {
+            printf("Invalid choice\n");
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+int main()
+{
+    menu();
+    return 0;
+}
