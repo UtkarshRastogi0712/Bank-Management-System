@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+int acc_count=1;
+struct account
+{
+    long long int dob, acc_num, aadhar_num;
+    int pin;
+    float balance;
+    char name[100];
+};
+void init(struct account *accs)
+{
+    accs->dob=0;
+    accs->acc_num=1010101010101010;
+    accs->aadhar_num=0;
+    accs->balance=10000000;
+    accs->pin=9999;
+    strcpy(accs->name,"Bank");
+}
+void transaction(struct account *accs)
+{
+    char ts_name[100];
+    long long int ts_acc_num;
+    int i,pos,flag=0;
+    printf("Enter your account number\n");
+    scanf("%lld",&ts_acc_num);
+    for(i=0;i<acc_count;i++)
+    {
+        printf("Position %d : %lld : %lld\n",i,(accs+i)->acc_num,ts_acc_num);
+        if((accs+i)->acc_num == ts_acc_num)
+        {
+            pos=i;
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+    {
+        printf("Account number does not exist in database\n");
+        return;
+    }
+    printf("Enter your name\n");
+    printf("Enter your pin number\n");
+    printf("Enter the account number of the beneficiary\n");
+    printf("Enter the amount\n");
+}
+void open_acc(struct account *accs)
+{
+    printf("Location of pointer %lld\n",accs);
+    printf("Enter your date of birth in YYYYMMDD format\n");
+    scanf("%lld",&(accs->dob));
+    printf("Enter your name\n");
+    char temp_name[100];
+    scanf(" %[^\n]",temp_name);
+    strcpy(accs->name,temp_name);
+    printf("Enter your aadhar number\n");
+    scanf("%lld",&(accs->aadhar_num));
+    printf("Set your four digit pin number\n");
+    scanf("%d",&(accs->pin));
+    accs->balance=0;
+    accs->acc_num=rand();
+    printf("Your account has been opened under account number %lld\n",accs->balance);
+}
+void display()
+{
+    printf("Enter your choice of operation\n");
+    printf("1. Open new account\n");
+    printf("2. Make transaction\n");
+    printf("3. Close existing account\n");
+    printf("4. Modify account details\n");
+    printf("5. Exit\n");
+    printf("Choose your operation 1 to 5\n");
+}
+void menu(struct account *accs)
+{
+    
+    while(1)
+    {
+        int choice;
+        display();
+        scanf("%d",&choice);
+        if(choice<1 || choice>5)
+        {
+            printf("Invalid choice\n");
+        }
+        else
+        {
+            switch(choice)
+            {
+                case 1:
+                    acc_count++;
+                    accs = (struct account *)realloc(accs,acc_count);
+                    printf("First pointer %lld\n",accs);
+                    printf("Size of structure %lld\n",sizeof(struct account));
+                    printf("Second pointer %lld\n",accs+1);
+                    open_acc(accs+acc_count-1);
+                    break;
+                case 2:
+                    transaction(accs);
+                    break;   
+                case 5:
+                    printf("Thank you for transacting with us");
+                    break;             
+            }
+            //break;
+        }
+    }
+}
+int main()
+{
+    srand(time(0));
+    struct account *accs;
+    accs = (struct account *)calloc(acc_count, sizeof(struct account));
+    init(accs);
+    menu(accs);
+    return 0;
+}
