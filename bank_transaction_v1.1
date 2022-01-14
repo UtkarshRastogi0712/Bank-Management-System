@@ -1,0 +1,208 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+int acc_count=1;
+struct account
+{
+    long long int dob, acc_num, aadhar_num;
+    int pin;
+    float balance;
+    char name[100];
+};
+void init(struct account *accs)
+{
+    accs->dob=0;
+    accs->acc_num=1010101010101010;
+    accs->aadhar_num=0;
+    accs->balance=10000000;
+    accs->pin=9999;
+    strcpy(accs->name,"Bank");
+}
+void transaction(struct account *accs)
+{
+    struct account temp;
+    int i,pos,flag=0;
+    printf("Enter your account number\n");
+    scanf("%lld",&temp.acc_num);
+    for(i=1;i<acc_count;i++)
+    {
+        if((accs+i)->acc_num == temp.acc_num)
+        {
+            pos=i;
+            flag=1;
+            break;
+        }
+    }
+    if(flag==0)
+    {
+        printf("Account number does not exist in database\n");
+        return;
+    }
+    printf("Enter your pin number for verification : \n");
+    scanf("%d",&temp.pin);
+    if(temp.pin == (accs+pos)->pin)
+    {
+        printf("Choose the type of transaction : \n");
+        printf("1. Withdraw\n");
+        printf("2. Deposit\n");
+        printf("3. Send money to beneficiary\n");
+        int choice;
+        scanf("%d",&choice);
+        float amount;
+        switch(choice)
+        {
+            case 1:
+                printf("Enter amount to withdraw\n");
+                scanf("%f",&amount);
+                if(amount > ((accs+pos)->balance))
+                {
+                    printf("Not enough balance in accout\n");
+                    break;
+                }
+                else
+                {
+                    (accs+pos)->balance-=amount;
+                    printf("%0.2f withdrawn from account\n",amount);
+                    printf("Remaining account balance : %0.2f\n", (accs+pos)->balance);
+                }
+                break;
+            case 2:
+                printf("Enter amount to deposit\n");
+                scanf("%f",&amount);
+                (accs+pos)->balance+=amount;
+                printf("%0.2f deposited to account\n",amount);
+                printf("Current account balance : %0.2f\n", (accs+pos)->balance);
+                break;
+            case 3:
+                printf("Enter the account number of the beneficiary\n");
+                long long int beneficiary;
+                int dest_flag=0,dest_pos;
+                scanf("%lld",&beneficiary);
+                for(int j=0;j<acc_count;j++)
+                {
+                    printf("%d : %lld : %lld \n",j,beneficiary,(accs+j)->acc_num);
+                    if(j==pos)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if(beneficiary == (accs+j)->acc_num)
+                        {
+                            dest_flag=1;
+                            dest_pos=j;
+                            printf("Beneficiary found at pos %d",dest_pos);
+                            break;
+                        }
+                    }
+                }
+                if(dest_flag==0)
+                {
+                    printf("Beneficiary account doesnt exist\n");
+                }
+                break;
+            default:
+                printf("Invalid choice");
+                return;
+        }        
+    }
+    else
+    {
+        printf("Incorrect pin number");
+        return;
+    }
+}
+void open_acc(struct account *accs)
+{
+    acc_count++;
+    if(acc_count==2)
+    {
+        acc_count+=2;
+    }
+    accs = (struct account *)realloc(accs,acc_count);
+//    printf("Acc count %d\n",acc_count);
+//    printf("Current location %d\n",(accs+acc_count-1));
+    memset(&((accs+acc_count-1)->pin),0,sizeof(int));
+    memset(&((accs+acc_count-1)->dob),0,sizeof(long long int));
+    memset(&((accs+acc_count-1)->acc_num),0,sizeof(long long int));
+    memset(&((accs+acc_count-1)->aadhar_num),0,sizeof(long long int));
+    memset(&((accs+acc_count-1)->balance),0,sizeof(float));
+    memset(&((accs+acc_count-1)->name),'\0',sizeof(long long int)); 
+    struct account temp;
+    printf("Enter your date of birth in YYYYMMDD format\n");
+    scanf("%lld",&temp.dob);
+    printf("Enter your name\n");
+    char t_name[100];
+    scanf(" %[^\n]",temp.name);
+    strcpy((accs+acc_count-1)->name,temp.name);
+    printf("Enter your aadhar number\n");
+    scanf("%lld",&temp.aadhar_num);
+    printf("Set your four digit pin number\n");
+    scanf("%d",&temp.pin);
+    (accs+acc_count-1)->pin=temp.pin;
+    (accs+acc_count-1)->aadhar_num=temp.aadhar_num;
+    (accs+acc_count-1)->dob=temp.dob;
+    (accs+acc_count-1)->balance=0;
+    (accs+acc_count-1)->acc_num=rand();
+    printf("Congratulations, your account has been opened. Account details:\n");
+    printf("Name : %d \n",&((accs+acc_count-1)->name));
+    for(int i=0;i<strlen((accs+acc_count-1)->name);i++)
+    {
+        printf("%c",(accs+acc_count-1)->name[i]);
+    }
+    printf("\n");
+    printf("Date of birth : %lld : %d\n",(accs+acc_count-1)->dob,&((accs+acc_count-1)->dob));
+    printf("Account number : %lld : %d\n",(accs+acc_count-1)->acc_num,&((accs+acc_count-1)->acc_num));
+    printf("Aadhar number : %lld : %d\n",(accs+acc_count-1)->aadhar_num,&((accs+acc_count-1)->aadhar_num));
+    printf("Pin number : %lld : %d\n",(accs+acc_count-1)->pin,&((accs+acc_count-1)->pin));
+    printf("Balance : %lld : %d\n",(accs+acc_count-1)->balance,&((accs+acc_count-1)->balance));
+}
+void display()
+{
+    printf("Enter your choice of operation\n");
+    printf("1. Open new account\n");
+    printf("2. Make transaction\n");
+    printf("3. Check account balance\n");
+    printf("4. Modify account details\n");
+    printf("5. Exit\n");
+    printf("Choose your operation 1 to 5\n");
+}
+void menu(struct account *accs)
+{
+    
+    while(1)
+    {
+        int choice;
+        display();
+        scanf("%d",&choice);
+        if(choice<1 || choice>5)
+        {
+            printf("Invalid choice\n");
+        }
+        else
+        {
+            switch(choice)
+            {
+                case 1:
+                    open_acc(accs);
+                    break;
+                case 2:
+                    transaction(accs);
+                    break;
+                case 5:
+                    printf("Thank you for transacting with us");
+                    return;             
+            }
+        }
+    }
+}
+int main()
+{
+    srand(time(0));
+    struct account *accs;
+    accs = (struct account *)calloc(acc_count, sizeof(struct account));
+    init(accs);
+    menu(accs);
+    return 0;
+}
