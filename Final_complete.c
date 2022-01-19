@@ -94,8 +94,8 @@ void modify(struct account *accs)
             case 3:
                 printf("Enter new four digit pin\n");
                 memset(&((accs+pos)->pin),0,sizeof(int));
-                scanf("%d",&((accs+pos)->));
-                printf("Date of birth changed to : %d \n",(accs+pos)->pin);
+                scanf("%d",&((accs+pos)->pin));
+                printf("Pin changed to : %d \n",(accs+pos)->pin);
                 break;
             case 4:
                 printf("New account details :\n");
@@ -191,7 +191,7 @@ void transaction(struct account *accs)
                     {
                         dest_flag=1;
                         dest_pos=j;
-                        printf("Beneficiary found at pos %d\n",dest_pos);
+                        //printf("Beneficiary found at pos %d\n",dest_pos);
                         printf("Enter the amount to send to beneficiary\n");
                         scanf("%f",&amount);
                         if(amount > ((accs+pos)->balance))
